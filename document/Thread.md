@@ -54,7 +54,7 @@ VD: Car redCar = new Car("red", "2015");
 
 ### Tính ứng dụng
 Vậy góc nhìn về thread-code-object mang lại cho ta lợi ích gì:  
-- Nếu bạn muốn hiện thực chức năng phần nào ta có thể chỉ quan tâm phần đó  
+- Hiểu hơn về phần nào làm nhiều vụ nào để dùng phù hợp 
 - Hiểu hơn mối liên hệ giữa các phần để có một cái nhìn rõ hơn về cách chương trình hoạt động -> xác định những nguyên nhân có thể gây ra lỗi
 - Hiểu hơn về tính reusable trong các tính huống khác nhau  
 
