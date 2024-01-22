@@ -68,6 +68,29 @@ Ta cần đồng bộ (synchronization mechanism)
 - Ví dụ, ta có list 10 học sinh cần lưu vào một object Cource trước khi lưu cần chuyển đổi một vài data   
 Ta tách list trên làm 2 nhóm cho 2 thread xử lý đồng thời, giảm thời gian thực thi của phần này xuống một nửa  
 Nhưng phần cập nhật list không biết được thứ tự thực hiện mà ta muốn giữ thứ tự học sinh theo nhóm,  
-Vậy ta khóa list trong Cource để list này được thực hiện lần lượt
+Vậy ta khóa list trong Cource để list này được thực hiện lần lượt  
+
+##### Dùng nhiều threads
+- Giúp tăng tốc độ phản hồi của chương trình  
+VD: một máy chỉ xử lý được một require của một user,   
+Giờ có 2 threads, giống như có 2 máy, bạn có thể xử lý cho 2 users cùng lúc  
+Giảm bớt thời gian chờ của user
+
+- Có 2 trường hợp: 
+  - 2 nhiệm vụ không liên quan gì đến nhau như 2 users khác nhau cập nhật 2 mật khẩu độc lập
+  - Nhưng nếu 2 nhiệm vụ liên quan hay ta cần 2 threads tương tác với nhau thì cần phải làm sao:
+    - Cùng cập nhật trên một shared object -> đảm bảo task 1 xong là complete task 1 và task 2 trên the object
+    - Phải đảm bảo kết quả mỗi lần đến như nhau
+    - Ví dụ: cập nhật tài khoản người chuyển và người nhận phải cùng được cập nhật thành công ở 2 object tài khoản khác nhau.  
+  Ta dùng synchronize cho 2 objects -> nhưng sẽ tốn thời gian và tài nguyên chỗ này.
+
+
+### Ứng dụng trong swing:
+- Với những phần tương tác với giao diện ta phải đảm bảo tính phản hồi trên giao diện mượt mà.
+- Swing GUI cần chạy trên 1 UI thread duy nhất (Event dispatcher thread) để:
+  - Thay đổi được cập nhật trên nhiều giao diện đồng nhất
+  - Luôn đảm bảo kết quả đoán định được, đúng mọi lúc
+- Vậy làm sao mà chạy mượt nếu chỉ có 1 thread mà không bị đứng (hang: không phản hổi, chờ)
+
 
   
