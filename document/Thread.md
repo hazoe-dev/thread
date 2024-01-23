@@ -12,17 +12,18 @@ Cụ thể:
 - **Class** là một bản thế kế.  
 Trong OOP, class đóng gói của một loại thực thể trong thực tế vào chương trình gồm những:
   - **data**/properties/đặc trưng 
-  - **behavior**/method/algorithm .    
-  -> Giúp tổ chức các thành phần trong chương trình, ví dụ chương trình này có class Car, Bill...
-  Ví dụ: class Car  
-- Object phản ánh một _thực thế cụ thể_ từ class, cái đóng gói trong một _ngữ nghĩa cụ thể_.  
-Được truy xuất thông qua biến, cái lưu trữ tham chiếu đến địa chỉ của object được lưu trong vùng nhớ heap.  
+  - **behavior**/method/algorithm và logic .    
+  -> Giúp tổ chức các thành phần trong chương trình,   
+    ví dụ chương trình quản lý xe trong cửa hàng được tổ chức thành class Car, Bill...
+ 
+- Object phản ánh một _thực thế cụ thể_ từ class, đóng gói 1 instance trong một _ngữ nghĩa cụ thể_.  
+Được truy xuất thông qua biến, với biến là nơi lưu trữ tham chiếu đến địa chỉ của object được lưu trong vùng nhớ heap.  
 VD: Car redCar = new Car("red", "2015");  
 - **Code** là một tập hợp lệnh hiện thực: 
   - Behavior của object (của class) 
   - Tương tác giữa các object
 
-=> Kết luận:
+##### Kết luận:
 - Object chứa code
 - Code chứa kịch bản/ logic hiện thực behavior của object
 
@@ -33,45 +34,51 @@ VD: Car redCar = new Car("red", "2015");
       * Cái con người hiểu được
       * Cái máy tính có thể thực thi   
 - Ngoài ra, tập lệnh trong code có thể định nghĩa cách quản lý và hành vi của thread: create, delete, stop, start, tương tác.
-- => Kết luận:
-- Code đóng vai trò trung gian cho giao tiếp giữa người và bộ xử lý máy tính, phản ảnh ở mức cao kịch bản con người muốn máy làm:  
-  - Code chạy trên thread
-  - Thread chạy code để thực thi
 
+##### Kết luận:
+
+- Code đóng vai trò trung gian cho giao tiếp giữa người và bộ xử lý máy tính, phản ảnh ở mức cao tập lệnh hay kịch bản con người muốn máy làm:  
+  - Code chạy trên thread
+  - Thread chạy code để thực thi một nhiệm vụ cụ thể
 
 #### Thread và object
-- Nhưng thread muốn chạy có thì code là không đủ vì muốn chạy code:
-  - Cần kịch bản code
-  - Cần input/data/đối tượng chịu tác động/ đối tượng phản ánh thay đổi
-- Kết luận:
+- Nhưng thread muốn chạy thì code là không đủ vì muốn chạy code:
+  - Không chỉ cần tập lệnh / kịch bản của code
+  - Mà còn cần input/data/đối tượng chịu tác động/ đối tượng phản ánh thay đổi/ ngữ nghĩa để tương tác với máy
+
+##### Kết luận:
+
   - Object chính là phần trung gian đó:  
     - Thread muốn chạy code thì cần truyền code vào thread nhưng code không đứng độc lập, 
     code cần ngữ nghĩa, code cần là hành vi của một object cụ thể, code cần input cho hành vi,
     cần nơi lưu trữ thay đổi, code cần nằm trong một object   
-  -> Thread thực thi code thông qua object   
+  -> _Thread thực thi code thông qua object_   
 - Nếu đặt object trong multiple threads, thì object còn đóng vai trò lưu trữ dữ liệu cái được chia sử giữa các thread   
 -> Object giúp threads chia sẻ tài nguyên   
 
 ### Tính ứng dụng
 Vậy góc nhìn về thread-code-object mang lại cho ta lợi ích gì:  
-- Hiểu hơn về phần nào làm nhiều vụ nào để dùng phù hợp 
+- Hiểu hơn về phần nào làm nhiều vụ nào để dùng phù hợp: 
+  - Thread là máy thực thi lệnh, 
+  - Code định nghĩa tập lệnh, 
+  - Object là ngữ nghĩa (semantic) phản ánh một đối tượng được trừu tượng hóa và đưa vào trong chương trình để xử lý, đóng gói một dữ liệu đặc trưng và mô phỏng hành vi của đối tượng 
 - Hiểu hơn mối liên hệ giữa các phần để có một cái nhìn rõ hơn về cách chương trình hoạt động -> xác định những nguyên nhân có thể gây ra lỗi
 - Hiểu hơn về tính reusable trong các tính huống khác nhau  
 
-##### Giả sử: trong trường hợp nhiều threads chạy để cho ta khả năng chạy song song, đồng thời nhằm tăng hiệu suất chương trình
+##### Giả sử: trong trường hợp nhiều threads chạy, ta khả năng thực hiện song song, đồng thời nhiều nhiệm vụ cùng lúc nhằm tăng hiệu suất chương trình
 
-- 2 threads chạy 2 objects khác nhau -> tương tác trên hai ngữ nghĩa khác nhau -> tạo kết quả độc lập cho từng object  
-Nhưng ta thấy code được tái sử dụng 2 lần
-- 2 threads chạy song song nhưng 2 lần chạy cần tác động chung kết quả trên một object (ngữ nghĩa)  
-Phải đảm bảo kết quả đúng, là luôn ra cùng một kết quả có thể đoán định  
-Ta cần đồng bộ (synchronization mechanism)    
-- Ví dụ, ta có list 10 học sinh cần lưu vào một object Cource trước khi lưu cần chuyển đổi một vài data   
-Ta tách list trên làm 2 nhóm cho 2 thread xử lý đồng thời, giảm thời gian thực thi của phần này xuống một nửa  
-Nhưng phần cập nhật list không biết được thứ tự thực hiện mà ta muốn giữ thứ tự học sinh theo nhóm,  
-Vậy ta khóa list trong Cource để list này được thực hiện lần lượt  
+1. 2 threads chạy 2 objects khác nhau -> tương tác trên hai ngữ nghĩa khác nhau -> tạo kết quả độc lập cho từng object    
+=> ta thấy code được tái sử dụng 2 lần
+2. 2 threads chạy song song nhưng 2 lần chạy cần tác động chung trên một object (ngữ nghĩa)  
+Phải đảm bảo kết quả đúng, là luôn ra cùng một kết quả có thể đoán định cho mọi lần chạy (consistent)  
+Ta cần đồng bộ (synchronization mechanism)   
+Ví dụ, ta có list 10 học sinh cần lưu vào một object Cource, trước khi lưu cần chuyển đổi một vài data   
+Ta tách list trên làm 2 nhóm cho 2 thread xử lý đồng thời, giảm thời gian thực thi của phần convert data này xuống một nửa  
+Khi cập nhật vào list, nếu để thread chạy tự nhiên thì không biết được thứ tự sinh viên bị thay đổi như nào, mà ta muốn giữ thứ tự học sinh theo nhóm,  
+Vậy ta khóa list (synchronize) trong Cource để list này được thực hiện lần lượt  
 
 ##### Dùng nhiều threads
-- Giúp tăng tốc độ phản hồi của chương trình  
+- Giúp tăng tốc độ phản hồi của chương trình   
 VD: một máy chỉ xử lý được một require của một user,   
 Giờ có 2 threads, giống như có 2 máy, bạn có thể xử lý cho 2 users cùng lúc  
 Giảm bớt thời gian chờ của user
@@ -79,7 +86,8 @@ Giảm bớt thời gian chờ của user
 - Có 2 trường hợp: 
   - 2 nhiệm vụ không liên quan gì đến nhau như 2 users khác nhau cập nhật 2 mật khẩu độc lập
   - Nhưng nếu 2 nhiệm vụ liên quan hay ta cần 2 threads tương tác với nhau thì cần phải làm sao:
-    - Cùng cập nhật trên một shared object -> đảm bảo task 1 xong là complete task 1 và task 2 trên the object
+    - Cùng cập nhật trên một shared object -> đảm bảo task 1 xong là complete thì task 2 mới chạy trên the shared object hoặc ngược lại  
+Đảm bảo tính toàn vẹn của một nhiệm vụ không bị thay đổi
     - Phải đảm bảo kết quả mỗi lần đến như nhau
     - Ví dụ: cập nhật tài khoản người chuyển và người nhận phải cùng được cập nhật thành công ở 2 object tài khoản khác nhau.  
   Ta dùng synchronize cho 2 objects -> nhưng sẽ tốn thời gian và tài nguyên chỗ này.
