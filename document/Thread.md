@@ -95,10 +95,41 @@ Giảm bớt thời gian chờ của user
 
 ### Ứng dụng trong swing:
 - Với những phần tương tác với giao diện ta phải đảm bảo tính phản hồi trên giao diện mượt mà.
-- Swing GUI cần chạy trên 1 UI thread duy nhất (Event dispatcher thread) để:
+- Swing GUI cần chạy trên 1 UI thread duy nhất (Event dispatch thread - EDT) để:
   - Thay đổi được cập nhật trên nhiều giao diện đồng nhất
   - Luôn đảm bảo kết quả đoán định được, đúng mọi lúc
+- Event dispatch thread là thread quản lý sự kiện và cập nhật component hiển thị
 - Vậy làm sao mà chạy mượt nếu chỉ có 1 thread mà không bị đứng (hang: không phản hổi, chờ)
+
+- Swing cho chúng ta:
+  - SwingWorker: tách những nhiệm vụ chạy lâu mà không cần dùng UI ra một luồng khác thực thi
+  - SwingUtilities.invokeLater: cho phép ta tương tác với UI thread từ thread khác
+
+Ứng dụng multiple threads vào bài toán 1 UI thread trên:  
+- Không phải UI task nào cũng phức tạp và chạy lâu, vì với những thao tác xử lý event của UI component thường đơn giản và có thể thực hiện nhanh chóng.   
+ Ví dụ: bạn click vào một button thì bảng bên cạnh nó sẽ được ẩn đi 
+- Với những task mà không chỉ tương tác với UI, ta còn cần cập nhật database, call service ...  
+ Thì thời gian sẽ lâu hơn rất nhiều vì ta phải đợi phản hồi và xử lý phần UI phản hồi lại user.
+  - Phần lâu đó có thể đến từ mạng không ổn định khi call service, logic xử lý phức tạp, quá trình lưu data lâu khi database thuộc một lab khác, hay 
+  nếu bạn đang dùng hệ quản trị cơ sở dữ liệu quan hệ (RDBMS) thì có thể còn phụ thuộc vào các mức độ isolation mà bạn đang dùng, vv...
+  - Với loại task thứ 2 này mình có thể chia nhỏ task thành nhiều phần hơn:
+    - Task UI thì nhanh
+    - Task xử lý thì lâu, ta để nó chạy ngầm trên một luồng khác
+      - Nhưng sau khi chia, ta lại có những nhu cầu khác với background task này:
+      - 1, Không cần quan tâm đến kết quả trả về 
+      - 2, Cần nhận kết quả trả về sau cùng
+      - 3, Cần nhận trạng thái cập nhật từng giai đoạn
+=> Đáp ứng những nhu cầu trên, swing support swingWorker.
+      - SwingWorker: cung cấp một luồng mới ngoài UI thread cho task xử lý lâu
+      - Nếu bạn không quan tâm đến kết quả trả về -> bạn chỉ cần implement doInBackground()
+      - Nếu bạn muốn nhận kết quả sau cùng để cập nhật UI -> bạn chỉ cần implement done() 
+      - Nếu bạn muốn nhận trạng thái trong từng giai đoạn để cập nhật UI process -> bạn chỉ cần implement process() 
+
+- Cách dùng SwingWorker:
+    - Bạn cần định nghĩa kiểu trả về co method done và process khi new object implement SwingWorker
+    - Muốn lấy kết quả sau cùng của doInBackground trong done, bạn gọi get()
+  - Muốn lấy kết quả trạng thái của doInBackground trong process, bạn call publish và truyền vào trạng thái thông báo, 
+  bạn lấy được danh sách data đã publish trong argument của process() 
 
 
   
