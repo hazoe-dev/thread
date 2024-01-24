@@ -1,7 +1,7 @@
 # Thread
 ### Tổng quan 
 - Nhận thức về thread tạo ra một bức tranh rõ ràng về cách một chương trình hoạt động.
-- Thread, code và object có mối quan hệ chặt chẽ với nhau.
+- Thread, code và object có mối quan hệ chặt chẽ với nhau.  
   ![overview](images/OverviewRelationship.svg)
 
 ### Mối quan hệ giữa thread - code - object
@@ -58,14 +58,16 @@ VD: Car redCar = new Car("red", "2015");
 
 ### Tính ứng dụng
 Vậy góc nhìn về thread-code-object mang lại cho ta lợi ích gì:  
-- Hiểu hơn về phần nào làm nhiều vụ nào để dùng phù hợp: 
+- Hiểu hơn về cách hoạt động các thành phần trong chương trình thật sự thực hiện nào để dùng phù hợp: 
   - Thread là máy thực thi lệnh, 
   - Code định nghĩa tập lệnh, 
   - Object là ngữ nghĩa (semantic) phản ánh một đối tượng được trừu tượng hóa và đưa vào trong chương trình để xử lý, đóng gói một dữ liệu đặc trưng và mô phỏng hành vi của đối tượng 
-- Hiểu hơn mối liên hệ giữa các phần để có một cái nhìn rõ hơn về cách chương trình hoạt động -> xác định những nguyên nhân có thể gây ra lỗi
-- Hiểu hơn về tính reusable trong các tính huống khác nhau  
+- Khi hiểu được thread, code và object khác nhau như thế nào, bạn sẽ có thể cân nhắc khi nào thì nên quan tâm đến vấn đề đồng bộ trong **multiple threads**:
+    - Nếu bạn đang work trên 1 thread với 1 code,  2 objects khác nhau thì không vấn đề gì
+    - Nhưng nếu bạn dùng 2 threads với 1 code,  1 object thì nên cân nhắc trường hợp xử lý dead block hay tranh chấp tài nguyên, 
+  vì các threads có khả năng chia sẻ tài nguyên thông qua objects trong bộ nhớ heap.
 
-##### Giả sử: trong trường hợp nhiều threads chạy, ta khả năng thực hiện song song, đồng thời nhiều nhiệm vụ cùng lúc nhằm tăng hiệu suất chương trình
+##### Xét trường hợp nhiều threads chạy, ta có khả năng thực hiện song song, đồng thời nhiều nhiệm vụ cùng lúc nhằm tăng hiệu suất chương trình
 
 1. 2 threads chạy 2 objects khác nhau -> tương tác trên hai ngữ nghĩa khác nhau -> tạo kết quả độc lập cho từng object    
 => ta thấy code được tái sử dụng 2 lần
@@ -95,11 +97,12 @@ Giảm bớt thời gian chờ của user
 
 ### Ứng dụng trong swing:
 - Với những phần tương tác với giao diện ta phải đảm bảo tính phản hồi trên giao diện mượt mà.
-- Swing GUI cần chạy trên 1 UI thread duy nhất (Event dispatch thread - EDT) để:
+- Swing GUI cần chạy trên 1 UI thread duy nhất (Event dispatch thread - EDT) vì cần:
   - Thay đổi được cập nhật trên nhiều giao diện đồng nhất
   - Luôn đảm bảo kết quả đoán định được, đúng mọi lúc
-- Event dispatch thread là thread quản lý sự kiện và cập nhật component hiển thị
-- Vậy làm sao mà chạy mượt nếu chỉ có 1 thread mà không bị đứng (hang: không phản hổi, chờ)
+  - Nếu dùng multiple threads thì sẽ rất phức tạp trong xử lý đồng bộ 
+  - Event dispatch thread là thread quản lý sự kiện và cập nhật component hiển thị nên thường chỉ có những xử lý đơn giản và nhanh chóng
+- Vậy làm sao mà chạy mượt nếu chỉ có 1 thread mà không bị đứng (hang: không phản hổi, chờ) cho những xử lý khác nếu không chỉ là xử lý giao diện.
 
 - Swing cho chúng ta:
   - SwingWorker: tách những nhiệm vụ chạy lâu mà không cần dùng UI ra một luồng khác thực thi
@@ -109,7 +112,7 @@ Giảm bớt thời gian chờ của user
 - Không phải UI task nào cũng phức tạp và chạy lâu, vì với những thao tác xử lý event của UI component thường đơn giản và có thể thực hiện nhanh chóng.   
  Ví dụ: bạn click vào một button thì bảng bên cạnh nó sẽ được ẩn đi 
 - Với những task mà không chỉ tương tác với UI, ta còn cần cập nhật database, call service ...  
- Thì thời gian sẽ lâu hơn rất nhiều vì ta phải đợi phản hồi và xử lý phần UI phản hồi lại user.
+ Thì thời gian sẽ lâu hơn rất nhiều vì ta phải đợi phản hồi và xử lý phần UI phản hồi lại user sau đó chẳng hạn.
   - Phần lâu đó có thể đến từ mạng không ổn định khi call service, logic xử lý phức tạp, quá trình lưu data lâu khi database thuộc một lab khác, hay 
   nếu bạn đang dùng hệ quản trị cơ sở dữ liệu quan hệ (RDBMS) thì có thể còn phụ thuộc vào các mức độ isolation mà bạn đang dùng, vv...
   - Với loại task thứ 2 này mình có thể chia nhỏ task thành nhiều phần hơn:
@@ -130,6 +133,8 @@ Giảm bớt thời gian chờ của user
     - Muốn lấy kết quả sau cùng của doInBackground trong done, bạn gọi get()
   - Muốn lấy kết quả trạng thái của doInBackground trong process, bạn call publish và truyền vào trạng thái thông báo, 
   bạn lấy được danh sách data đã publish trong argument của process() 
+
+
 
 
   
