@@ -133,6 +133,27 @@ Giảm bớt thời gian chờ của user
     - Muốn lấy kết quả sau cùng của doInBackground trong done, bạn gọi get()
   - Muốn lấy kết quả trạng thái của doInBackground trong process, bạn call publish và truyền vào trạng thái thông báo, 
   bạn lấy được danh sách data đã publish trong argument của process() 
+  - Vì SwingWorker là một thread nên chỉ được thực thi thông qua start lên ở đây chính là execute() method.
+
+- Thấy rằng SwingWorker support 2 thread khác nhau, một cái là UI thread một cái la background worker thread.  
+Vậy làm sao 2 thread này giao tiếp với nhau:
+  - Chính là nhờ SwingUtilities.invokeLater được gọi cho done() và process() 
+
+SwingUtilities.invokeLater
+- Giúp bạn dù đứng ở thread nào cũng sẽ đều thực thi được code trên UI thread.
+- Vì trong API của method trên, nhận vào 1 object implement Runnable, cái mà sẽ được add vào Event queue của UI thread nên 
+code trên object này sẽ có thể được chạy trên UI thread
+
+Cũng tương tự như SwingUtilities.invokeLater, SwingWorker một xử lý trên swing có thể được xử lý trên actionListener,
+vậy những khái niệm này có gì giống và khác nhau trong swing:  
+
+|           | SwingWorker                                                                                                                                                                                                                                                                                                                                                                                                                       | SwingUtilities.invokeLater                                         | ActionListener                           |  
+|-----------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------|:-----------------------------------------|
+| Type      | Abstract class                                                                                                                                                                                                                                                                                                                                                                                                                    | Interface                                                          | Interface                                |
+| Chức năng | Chạy ngầm 1 task phức tap / mất nhiều thời gian trên 1 thread khác <br/>, xử lý phản hồi trả về cho UI thread                                                                                                                                                                                                                                                                                                                     | Cho phép một thread ngoài UI thead có thể chạy được trên UI thread | Xử lý event của component trên UI thread |
+| Sử dụng   | - Anonymous inner class: Nếu chỉ dùng một lần, và cần truy cập member variables của GUI class mà không cần export ra ngoài<br/> - Inner class: trong 1 class mình muốn reuse cho nhiều method khác trong cùng class dùng và muốn truy cập member variables của GUI class mà không cần export </br> - A new class: can reuse for many classes, nhưng bạn phải export member variables của GUI classes bạn muốn dùng                | Like SwingWorker                                                   | Like SwingWorker                         |
+| 
+
 
 
 
