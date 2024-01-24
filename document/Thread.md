@@ -70,7 +70,7 @@ Vậy góc nhìn về thread-code-object mang lại cho ta lợi ích gì:
 ##### Xét trường hợp nhiều threads chạy, ta có khả năng thực hiện song song, đồng thời nhiều nhiệm vụ cùng lúc nhằm tăng hiệu suất chương trình
 
 1. 2 threads chạy 2 objects khác nhau -> tương tác trên hai ngữ nghĩa khác nhau -> tạo kết quả độc lập cho từng object    
-=> ta thấy code được tái sử dụng 2 lần
+=> ta thấy code chạy đồng thời
 2. 2 threads chạy song song nhưng 2 lần chạy cần tác động chung trên một object (ngữ nghĩa)  
 Phải đảm bảo kết quả đúng, là luôn ra cùng một kết quả có thể đoán định cho mọi lần chạy (consistent)  
 Ta cần đồng bộ (synchronization mechanism)   
@@ -129,11 +129,11 @@ Giảm bớt thời gian chờ của user
       - Nếu bạn muốn nhận trạng thái trong từng giai đoạn để cập nhật UI process -> bạn chỉ cần implement process() 
 
 - Cách dùng SwingWorker:
-    - Bạn cần định nghĩa kiểu trả về co method done và process khi new object implement SwingWorker
+    - Bạn cần định nghĩa kiểu trả về cho method done và process khi new object implement SwingWorker
     - Muốn lấy kết quả sau cùng của doInBackground trong done, bạn gọi get()
   - Muốn lấy kết quả trạng thái của doInBackground trong process, bạn call publish và truyền vào trạng thái thông báo, 
   bạn lấy được danh sách data đã publish trong argument của process() 
-  - Vì SwingWorker là một thread nên chỉ được thực thi thông qua start lên ở đây chính là execute() method.
+  - Vì SwingWorker là một thread nên chỉ được thực thi cần start, ở đây chính là execute() method.
 
 - Thấy rằng SwingWorker support 2 thread khác nhau, một cái là UI thread một cái la background worker thread.  
 Vậy làm sao 2 thread này giao tiếp với nhau:
