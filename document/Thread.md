@@ -317,7 +317,7 @@ public class ActionListenerExample {
 
 ```
 
-Compare SwingUtilities.invokeLater, SwingWorker and ActionListener
+#### Compare SwingUtilities.invokeLater, SwingWorker and ActionListener
 
 Cũng tương tự như SwingUtilities.invokeLater, SwingWorker một xử lý trên swing có thể được xử lý trên actionListener,
 vậy những khái niệm này có gì giống và khác nhau trong swing:  
