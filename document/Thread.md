@@ -278,6 +278,47 @@ public class InvokeLaterExample {
 }
 ```
 
+##### ActionListener:
+Cũng tương tự như SwingUtilities.invokeLater, SwingWorker, ActionListener cũng handle task trên UI thread
+1. Mục đích:  
+- Xử lý những sự kiện tương tác với UI component
+2. Giải thích cách thức  
+- Xử lý trong actionPerform sẽ được đẩy vào Queue event sau khi user thao tác trên component. 
+Ví dụ như click vào một button
+3. Cách dùng  
+- Add ActionListener vào component, implement actionPerform method
+4. Ví dụ
+
+```java
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class ActionListenerExample {
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("ActionListener Example");
+        JButton button = new JButton("Click me");
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Perform an action when the button is clicked
+                JOptionPane.showMessageDialog(frame, "Button Clicked!");
+            }
+        });
+
+        frame.getContentPane().add(button);
+        frame.setSize(300, 200);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
+
+```
+
+Compare SwingUtilities.invokeLater, SwingWorker and ActionListener
+
 Cũng tương tự như SwingUtilities.invokeLater, SwingWorker một xử lý trên swing có thể được xử lý trên actionListener,
 vậy những khái niệm này có gì giống và khác nhau trong swing:  
 
