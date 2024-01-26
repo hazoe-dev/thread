@@ -116,14 +116,17 @@ Giảm bớt thời gian chờ của user
 1. Mục đích: Để tránh tình huống UI bị treo, không phản hồi những task tốn thời gian được thực thi trên thread khác, 
 để thread UI được chạy liên tục với những nhiệm vụ đơn giản một cách nhanh chóng
 
-2. Giải thích cách thức
+2. Giải thích cách thức  
 Ứng dụng multiple threads vào bài toán swing chỉ có 1 UI thread:  
-- Không phải UI task nào cũng phức tạp và chạy lâu, vì với những thao tác xử lý event của UI component thường đơn giản và có thể thực hiện nhanh chóng.   
+- Không phải UI task nào cũng phức tạp và chạy lâu, vì những thao tác xử lý event của UI component thường đơn giản và 
+có thể thực hiện nhanh chóng.   
  Ví dụ: bạn click vào một button thì bảng bên cạnh nó sẽ được ẩn đi 
 - Với những task mà không chỉ tương tác với UI, ta còn cần cập nhật database, call service ...  
- Thì thời gian sẽ lâu hơn rất nhiều vì ta phải đợi phản hồi và xử lý phần UI phản hồi lại user sau đó chẳng hạn.
-  - Phần lâu đó có thể đến từ mạng không ổn định khi call service, logic xử lý phức tạp, quá trình lưu data lâu khi database thuộc một lab khác, hay 
-  nếu bạn đang dùng hệ quản trị cơ sở dữ liệu quan hệ (RDBMS) thì có thể còn phụ thuộc vào các mức độ isolation mà bạn đang dùng, vv...
+ Thì thời gian sẽ lâu hơn rất nhiều vì ta phải đợi phản hồi từ máy khác hay quá trình xử lý phức tập 
+rồi mới xử lý phần UI phản hồi lại user sau đó chẳng hạn.
+  - Phần lâu đó có thể đến từ mạng không ổn định khi call service, logic xử lý phức tạp, 
+quá trình lưu data lâu khi database thuộc một lab khác, hay 
+nếu bạn đang dùng hệ quản trị cơ sở dữ liệu quan hệ (RDBMS) thì có thể còn phụ thuộc vào các mức độ isolation mà bạn đang dùng, vv...
   - Với loại task thứ 2 này mình có thể chia nhỏ task thành nhiều phần hơn:
     - Task UI thì nhanh
     - Task xử lý thì tốn thời gian, ta để nó chạy ngầm trên một luồng khác
@@ -143,42 +146,51 @@ Giảm bớt thời gian chờ của user
 - Muốn lấy kết quả sau cùng của doInBackground trong done, bạn gọi get()
 - Muốn lấy kết quả trạng thái của doInBackground trong process, bạn call publish và truyền vào trạng thái thông báo, 
   bạn lấy được danh sách data đã publish trong argument của process() 
-- Vì SwingWorker là một thread nên chỉ được thực thi cần start, ở đây chính là execute() method.  
-Note:
-Thấy rằng SwingWorker support 2 thread khác nhau, một cái là UI thread một cái là background worker thread.  
-Vậy làm sao 2 thread này giao tiếp với nhau:
-  - Chính là nhờ SwingUtilities.invokeLater được gọi trong done() và process() 
+- Vì SwingWorker là một thread nên chỉ được thực thi sau khi start, ở đây chính là call execute() method để bạn start 
+background worker thread.  
 
 4. Ví dụ
 
-```
+```java
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class SwingWorkerExample {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("SwingWorker Example");
         JButton button = new JButton("Fetch Data");
+        JProgressBar progressBar = new JProgressBar(0, 10);
+        progressBar.setStringPainted(true);
 
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // When the button is clicked, start a background worker task
                 // specifying the types for the result and intermediate results if needed
-                new SwingWorker<String, String>() {
+                new SwingWorker<String, Integer>() {
                     @Override
                     protected String doInBackground() throws Exception {
-                        // This code runs in the background thread
-                        // a time-consuming task (e.g fetching data from a server)
-                        Thread.sleep(3000);
+                    // This code runs in the background thread
+                    // a time-consuming task (e.g fetching data from a server)
+                        for (int i = 1; i <= 10; i++) {
+                            // Simulate a time-consuming task
+                            Thread.sleep(500);
+                            // Publish interim results
+                            publish(i);
+                        }
                         return "Data fetched successfully!";
                     }
                     @Override
-                    protected void process(List<String> chunks) {
+                    protected void process(List<Integer> chunks) {
                         // This code runs on the EDT
                         // can process interim results
+                        for (Integer progress : chunks) {
+                            progressBar.setValue(progress);  // Update UI with interim result
+                        }
                     }
 
                     @Override
@@ -192,9 +204,70 @@ public class SwingWorkerExample {
                             ex.printStackTrace();
                         }
                     }
-                //starts the background task
+                    //starts the background task
                 }.execute();
             }
+        });
+
+        frame.setLayout(new FlowLayout());
+        frame.getContentPane().add(button);
+        frame.getContentPane().add(progressBar);
+        frame.setSize(300, 200);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
+}
+```
+
+Note:
+Ta thấy rằng SwingWorker support 2 thread khác nhau, một cái là UI thread một cái là background worker thread.  
+Vậy làm sao 2 thread này giao tiếp với nhau?
+- Chính là nhờ SwingUtilities.invokeLater được gọi trong done() và process()  
+
+##### SwingUtilities.invokeLater:
+
+1. Mục đích:  
+- Giúp bạn dù đứng ở thread nào cũng sẽ đều thực thi được code trên UI thread.
+- Đảm bảo code bạn sử dụng với Swing component luôn được chạy trên UI thread (EDT).
+
+2. Giải thích cách thức  
+- Vì trong API của method trên, nhận vào 1 object implement Runnable, cái mà sẽ được add vào Event queue của UI thread nên
+  code trên object này sẽ có thể được chạy trên UI thread
+
+
+3. Cách dùng  
+- Thường dùng khi bạn xử lý xong một task tốn thời gian ở thread chạy ngầm khác _ cái không phải UI thread 
+và bạn muốn cập nhật Swing component trên UI thread.
+- Bạn call SwingUtilities.invokeLater, bỏ vào method này một object của class implement Runnable, đưa code bạn muốn xử lý 
+ vào hàm run().  
+
+4. Ví dụ  
+
+```java
+
+import javax.swing.*;
+
+public class InvokeLaterExample {
+
+    public static void main(String[] args) {
+        JFrame frame = new JFrame("InvokeLater Example");
+        JButton button = new JButton("Update UI");
+
+        button.addActionListener(e -> {
+            // Perform a time-consuming task in a background thread
+            new Thread(() -> {
+                // Simulate a time-consuming task (e.g., complex computation)
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
+
+                // Update UI on the EDT using invokeLater
+                SwingUtilities.invokeLater(() -> {
+                    JOptionPane.showMessageDialog(frame, "UI updated after background task.");
+                });
+            }).start();
         });
 
         frame.getContentPane().add(button);
@@ -203,13 +276,7 @@ public class SwingWorkerExample {
         frame.setVisible(true);
     }
 }
-
 ```
-
-SwingUtilities.invokeLater
-- Giúp bạn dù đứng ở thread nào cũng sẽ đều thực thi được code trên UI thread.
-- Vì trong API của method trên, nhận vào 1 object implement Runnable, cái mà sẽ được add vào Event queue của UI thread nên 
-code trên object này sẽ có thể được chạy trên UI thread
 
 Cũng tương tự như SwingUtilities.invokeLater, SwingWorker một xử lý trên swing có thể được xử lý trên actionListener,
 vậy những khái niệm này có gì giống và khác nhau trong swing:  
