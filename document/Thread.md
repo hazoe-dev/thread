@@ -11,7 +11,7 @@
 Vậy nên chương trình có thể có nhiều process trên những ngôn ngữ hay hệ điều hành không dùng khái niệm thread như javascript với linux.  
 Vấn đề là giao tiếp giữa các process rất khó khăn.  
 Thread ra đời là để chia sẽ data giữa những task trong process dễ dàng hơn mà vẫn thực hiện được chạy song song các task trên những threads khác nhau.
-- Từ đó có bài toán multiple thread để giải quyết vấn đề tình phản hồi và hiệu suất.
+- Từ đó có bài toán multiple thread để giải quyết vấn đề tính phản hồi và hiệu suất.
 - Thực chất, các thread hay process được thực hiện tuần tự, nhưng nhờ có hệ điều hành điều phối (switch context) với những nguyên tắc phân chia tài nguyên hiệu quả,  
 sẽ trông giống như các task được chạy song song vì thời gian switch rất nhỏ.
 
