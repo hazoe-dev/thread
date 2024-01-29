@@ -151,8 +151,8 @@ nếu bạn đang dùng hệ quản trị cơ sở dữ liệu quan hệ (RDBMS)
 => Đáp ứng những nhu cầu trên, swing support SwingWorker.  
 - SwingWorker: cung cấp một luồng mới ngoài UI thread cho task xử lý lâu
 - Nếu bạn không quan tâm đến kết quả trả về -> bạn chỉ cần implement doInBackground()
-- Nếu bạn muốn nhận kết quả sau cùng để cập nhật UI -> bạn chỉ cần implement done() 
-- Nếu bạn muốn nhận trạng thái trong từng giai đoạn để cập nhật UI process -> bạn chỉ cần implement process() 
+- Nếu bạn muốn nhận kết quả sau cùng để cập nhật UI -> bạn chỉ cần implement thêm done() ngoài doInBackground()
+- Nếu bạn muốn nhận trạng thái trong từng giai đoạn để cập nhật UI process -> bạn chỉ cần implement thêm process() ngoài doInBackground()
 
 3. Cách dùng
 - Bạn cần định nghĩa kiểu trả về cho method done và process khi new object implement SwingWorker
