@@ -329,6 +329,12 @@ public class ActionListenerExample {
 }
 
 ```
+#### Mối quan hệ giữa SwingUtilities.invokeLater, SwingWorker and ActionListener
+- Khi tương tác với các UI component bằng ActionListener, bạn sẽ gặp rắc rối nếu nhiệm vụ mà action ấy xử lý quá tốn thời gian. 
+Vì bạn chỉ đang work trên một UI thread duy nhất và dẫn đến giao diện người dùng không phản hồi.
+- Vì vậy, SwingWorker ra đời giúp bạn xứ lý task tốn thời gian ở một thread khác.
+Nhưng lại có một vấn đề khác, bạn muốn đồng bộ kết quả ở worker thread với UI thread.
+- Vậy là ta có SwingUtilities.invokeLater hỗ trợ SwingWorker quá trình đồng bộ worker thread và UI thread.
 
 #### Compare SwingUtilities.invokeLater, SwingWorker and ActionListener
 
