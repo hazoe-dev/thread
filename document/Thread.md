@@ -1,4 +1,4 @@
-# Thread
+# Thread và Swing
 ### Tổng quan 
 - Nhận thức về thread tạo ra một bức tranh rõ ràng về cách một chương trình hoạt động.
 - Thread, code và object có mối quan hệ chặt chẽ với nhau.  
