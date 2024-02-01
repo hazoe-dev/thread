@@ -7,11 +7,12 @@
 ### Thread
 - Hệ điều hành cung cấp các dịch vụ để chạy và quản lý các ứng dụng cùng tài nguyên hardware của máy tính. 
 - Các chương trình thường độc lập với nhau để không bị lỗi không mong muốn và chạy trên những process độc lập.
-- Nếu chỉ có một process thì khoảng thời gian chờ đợi từng task thực hiện xong mới thực hiện task khác sẽ dẫn đến tình phản hồi thấp và hiệu suất giảm.  
-Vậy nên chương trình có thể có nhiều process trên những ngôn ngữ hay hệ điều hành không dùng khái niệm thread như javascript với linux.  
+- Nếu chỉ có một process thì khoảng thời gian chờ đợi từng task thực hiện xong mới thực hiện task khác 
+sẽ dẫn đến tình phản hồi thấp.  
+Vậy nên chương trình có thể có nhiều process trên những ngôn ngữ không dùng khái niệm thread như javascript.  
 Vấn đề là giao tiếp giữa các process rất khó khăn.  
 Thread ra đời là để chia sẽ data giữa những task trong process dễ dàng hơn mà vẫn thực hiện được chạy song song các task trên những threads khác nhau.
-- Từ đó có bài toán multiple thread để giải quyết vấn đề tính phản hồi và hiệu suất.
+- Từ đó, có bài toán multiple thread để giải quyết vấn đề tính phản hồi.
 - Thực chất, các thread hay process được thực hiện tuần tự, nhưng nhờ có hệ điều hành điều phối (switch context) với những nguyên tắc phân chia tài nguyên hiệu quả,  
 sẽ trông giống như các task được chạy song song vì thời gian switch rất nhỏ.
 
@@ -21,7 +22,10 @@ Cụ thể:
 #### Object và code  
 - **Object** là một thể hiện (instance) của một class
 - **Class** là một bản thiết kế.  
-Trong OOP, class đóng gói của một loại thực thể trong thực tế vào chương trình gồm những:
+Trong OOP, class không chỉ đóng gói của một loại thực thể trong thực tế vào chương trình mà còn có mục đích chính yếu 
+là một công cụ để thiết kế và lập trình chương trình một cách hiệu quả, cụ thể như để đảm bảo tính chất maintainable, reusable, extendable.
+
+Class thường bao gồm những:
   - **data**/properties/đặc trưng 
   - **behavior**/method/algorithm và logic .    
   -> Giúp tổ chức các thành phần trong chương trình,   
@@ -71,16 +75,16 @@ VD: Car redCar = new Car("red", "2015");
 Vậy góc nhìn về thread-code-object mang lại cho ta lợi ích gì:  
 - Hiểu về mối quan hệ trên giúp ta dùng thread hiệu quả hơn trong bài toán multiple threads.   
 Hệ điều hành sẽ quyết định khi nào thread nào được chạy, nên khi làm việc với thread ta không thể biết được khi nào thread thật sự chạy.
-- Hiểu hơn về cách hoạt động các thành phần trong chương trình thật sự thực hiện nào để dùng phù hợp: 
+- Hiểu hơn về cách hoạt động các thành phần trong chương trình để dùng phù hợp: 
   - Thread là máy thực thi lệnh, 
   - Code định nghĩa tập lệnh, 
   - Object là ngữ nghĩa (semantic) phản ánh một đối tượng được trừu tượng hóa và đưa vào trong chương trình để xử lý, đóng gói một dữ liệu đặc trưng và mô phỏng hành vi của đối tượng 
 - Khi hiểu được thread, code và object khác nhau như thế nào, bạn sẽ có thể cân nhắc khi nào thì nên quan tâm đến vấn đề đồng bộ trong **multiple threads**:
     - Nếu bạn đang work trên 1 thread với 1 code,  2 objects khác nhau thì không vấn đề gì
-    - Nhưng nếu bạn dùng 2 threads với 1 code,  1 object thì nên cân nhắc trường hợp xử lý dead block hay tranh chấp tài nguyên, 
+    - Nhưng nếu bạn dùng 2 threads với 1 code,  1 object thì nên cân nhắc trường hợp xử lý deadlock hay tranh chấp tài nguyên, 
   vì các threads có khả năng chia sẻ tài nguyên thông qua objects trong bộ nhớ heap.
 
-##### Xét trường hợp nhiều threads chạy, ta có khả năng thực hiện song song, đồng thời nhiều nhiệm vụ cùng lúc nhằm tăng hiệu suất chương trình
+##### Xét trường hợp nhiều threads chạy, ta có khả năng thực hiện song song, đồng thời nhiều nhiệm vụ cùng lúc nhằm tăng tính phản hồi của chương trình
 
 1. 2 threads chạy 2 objects khác nhau -> tương tác trên hai ngữ nghĩa khác nhau -> tạo kết quả độc lập cho từng object    
 => ta thấy code chạy đồng thời
@@ -347,7 +351,7 @@ vậy những khái niệm này có gì giống và khác nhau trong swing:
 | Chức năng   | Chạy ngầm 1 task phức tap / mất nhiều thời gian trên 1 thread khác <br/>, xử lý phản hồi trả về cho UI thread                                                                                                                                                                                                                                                                                                      | Cho phép một thread ngoài UI thead có thể chạy được trên UI thread                                                                                                                                                                    | Xử lý event của component trên UI thread                     |
 | Sử dụng     | - Anonymous inner class: Nếu chỉ dùng một lần, và cần truy cập member variables của GUI class mà không cần export ra ngoài<br/> - Inner class: trong 1 class mình muốn reuse cho nhiều method khác trong cùng class dùng và muốn truy cập member variables của GUI class mà không cần export </br> - A new class: can reuse for many classes, nhưng bạn phải export member variables của GUI classes bạn muốn dùng | Like SwingWorker                                                                                                                                                                                                                      | Like SwingWorker                                             |
 | Ưu điểm     | - Giải guyết bài toán hiệu suất bằng cách tách task tốn thời gian sang một thread khác để thực hiện được chạy đồng thời với đa luồng                                                                                                                                                                                                                                                                               | Đảm bảo code được chạy trên UI thread từ bất kì thread nào khác, cách dùng đơn giản                                                                                                                                                   | Xử lý event của component, cách dùng đơn giản                |
-| Nhược điểm  | - Sử dụng phức tạp hơn, cần hiểu rõ method nào chạy trên thread nào và khi nào dùng method đó </br> - Tốn tài nguyên vận hành 2 threads khác nhau </br> - Có khả năng bị dead block nếu dùng không đúng cách vì đang lập trình multiple threads                                                                                                                                                                    | - Có thể làm UI hang: nếu task quá tốn thời gian sẽ làm giảm hiệu suất <br/> - Không nhận được kết quả trả về đồng bộ như SwingWorker </br> - Có khả năng bị dead block nếu dùng không đúng cách vì đang lập trình multiple threads   | Chạy đơn luồng với UI thread, có thể bị hang, không phản hồi |
+| Nhược điểm  | - Sử dụng phức tạp hơn, cần hiểu rõ method nào chạy trên thread nào và khi nào dùng method đó </br> - Tốn tài nguyên vận hành 2 threads khác nhau </br> - Có khả năng bị deadlock nếu dùng không đúng cách vì đang lập trình multiple threads                                                                                                                                                                    | - Có thể làm UI hang: nếu task quá tốn thời gian sẽ làm giảm hiệu suất <br/> - Không nhận được kết quả trả về đồng bộ như SwingWorker </br> - Có khả năng bị deadlock nếu dùng không đúng cách vì đang lập trình multiple threads   | Chạy đơn luồng với UI thread, có thể bị hang, không phản hồi |
 
 
 
