@@ -71,6 +71,8 @@ VD: Car redCar = new Car("red", "2015");
 - Nếu đặt object trong multiple threads, thì object còn đóng vai trò lưu trữ dữ liệu cái được chia sử giữa các thread   
 -> Object giúp threads chia sẻ tài nguyên   
 
+#### Xét mối quan hệ thread - code - object trong thực tế
+
 ### Tính ứng dụng
 Vậy góc nhìn về thread-code-object mang lại cho ta lợi ích gì:  
 - Hiểu về mối quan hệ trên giúp ta dùng thread hiệu quả hơn trong bài toán multiple threads.   
